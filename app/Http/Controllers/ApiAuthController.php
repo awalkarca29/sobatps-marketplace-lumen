@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -50,6 +51,102 @@ class ApiAuthController extends Controller
         return $this->respondWithToken($token);
     }
 
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'address' => 'required',
+            'city' => 'required',
+            'phone' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 422);
+        }
+
+        $user = auth()->guard('api')->user();
+        $user = User::find($user->id);
+
+        if ($request->hasFile('image')) {
+            if ($user->image) {
+                $destination = public_path($user->image);
+                if (File::exists($destination)) {
+                    File::delete($destination);
+                }
+
+                //!! Firebase
+                // $oldData = $user->image;
+                // $oldUri = explode('/', $oldData);
+                // $filename = explode('?', $oldUri[5])[0];
+                // $old_firebase_storage_path = $oldUri[4] . '/' . $filename;
+                // app('firebase.storage')->getBucket()->object($old_firebase_storage_path)->delete();
+                //!! Firebase
+            }
+
+            $filename = $request->file('image')->store('UserImages', 'public');
+
+            //!! Firebase
+            // $imageData = $request->input('image');
+            // // $base64Image = substr($imageData, strpos($imageData, ',') + 1);
+            // $imageData = base64_decode($imageData);
+            // $fileName = date('Ymdhis') . $user->id . '.jpg';
+            // $firebaseStoragePath = "UserImages/{$fileName}";
+            // Storage::disk('local')->put("public/UserImages/{$fileName}", $imageData);
+            // $uploadedFile = fopen(storage_path("app/public/UserImages/{$fileName}"), 'r');
+            // app('firebase.storage')->getBucket()->upload($uploadedFile, ['name' => $firebaseStoragePath]);
+            // Storage::disk('local')->delete("public/UserImages/{$fileName}");
+            // $expiresAt = new DateTime('2030-01-01');
+            // $imageReference = app('firebase.storage')->getBucket()->object($firebaseStoragePath);
+            // $imageUrl = $imageReference->signedUrl($expiresAt);
+            // $user->image = $imageUrl;
+            //!! Firebase
+
+            $user->image = 'storage/' . $filename;
+        }
+
+        $user->name = $request->input('name');
+        $user->address = $request->input('address');
+        $user->city = $request->input('city');
+        $user->phone = $request->input('phone');
+        $user->save();
+
+        return response()->json($user);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'oldPassword' => 'required',
+            'password' => 'required',
+            'confirmPassword' => 'required|same:password',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->messages(), 422);
+        }
+
+        $user = auth()->guard('api')->user();
+        $user = User::find($user->id);
+        if (Hash::check($request->oldPassword, $user->password)) {
+            $user->update([
+                'password' => Hash::make($request->password),
+            ]);
+            return response()->json(['message' => 'Password successfully updated']);
+        } else {
+            return response()->json(['message' => 'Old password does not matched'], 400);
+        }
+    }
+
+    /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function user()
+    {
+        return response()->json(auth()->guard('api')->user());
+    }
+
     /**
      * Log the user out (Invalidate the token).
      *
@@ -60,6 +157,16 @@ class ApiAuthController extends Controller
         auth()->guard('api')->logout();
 
         return response()->json(['message' => 'Successfully logged out']);
+    }
+
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return $this->respondWithToken(auth()->guard('api')->refresh());
     }
 
     /**

@@ -56,7 +56,7 @@ class DatabaseSeeder extends Seeder
         Product::create([
             'user_id' => 1,
             'category' => json_encode([
-                ['id' => 1, 'category_name' => 'Hasil Hutan Bukan Kayu', 'slug' => 'hhbk'],
+                ['id' => 1, 'name' => 'Hasil Hutan Bukan Kayu', 'slug' => 'hhbk'],
             ]),
             'name' => 'produk admin 1 ke 1',
             'description' => 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eligendi, nesciunt.',
@@ -68,7 +68,7 @@ class DatabaseSeeder extends Seeder
         Product::create([
             'user_id' => 1,
             'category' => json_encode([
-                ['id' => 2, 'category_name' => 'Hasil Hutan Kayu', 'slug' => 'hhk'],
+                ['id' => 2, 'name' => 'Hasil Hutan Kayu', 'slug' => 'hhk'],
             ]),
             'name' => 'produk admin 1 ke 2',
             'description' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque, culpa?',
@@ -80,7 +80,7 @@ class DatabaseSeeder extends Seeder
         Product::create([
             'user_id' => 1,
             'category' => json_encode([
-                ['id' => 1, 'category_name' => 'Hasil Hutan Bukan Kayu', 'slug' => 'hhbk'],
+                ['id' => 1, 'name' => 'Hasil Hutan Bukan Kayu', 'slug' => 'hhbk'],
             ]),
             'name' => 'produk admin 1 ke 3',
             'description' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita, id.',
@@ -92,7 +92,7 @@ class DatabaseSeeder extends Seeder
         Product::create([
             'user_id' => 1,
             'category' => json_encode([
-                ['id' => 2, 'category_name' => 'Hasil Hutan Kayu', 'slug' => 'hhk'],
+                ['id' => 2, 'name' => 'Hasil Hutan Kayu', 'slug' => 'hhk'],
             ]),
             'name' => 'produk admin 1 ke 4',
             'description' => 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. In, ea!',
@@ -104,7 +104,7 @@ class DatabaseSeeder extends Seeder
         Product::create([
             'user_id' => 1,
             'category' => json_encode([
-                ['id' => 1, 'category_name' => 'Hasil Hutan Bukan Kayu', 'slug' => 'hhbk'],
+                ['id' => 1, 'name' => 'Hasil Hutan Bukan Kayu', 'slug' => 'hhbk'],
             ]),
             'name' => 'produk admin 1 ke 5',
             'description' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum, doloremque?',
@@ -116,7 +116,7 @@ class DatabaseSeeder extends Seeder
         Product::create([
             'user_id' => 2,
             'category' => json_encode([
-                ['id' => 2, 'category_name' => 'Hasil Hutan Kayu', 'slug' => 'hhk'],
+                ['id' => 2, 'name' => 'Hasil Hutan Kayu', 'slug' => 'hhk'],
             ]),
             'name' => 'produk admin 2 ke 1',
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet, maiores.',
@@ -128,7 +128,7 @@ class DatabaseSeeder extends Seeder
         Product::create([
             'user_id' => 2,
             'category' => json_encode([
-                ['id' => 1, 'category_name' => 'Hasil Hutan Bukan Kayu', 'slug' => 'hhbk'],
+                ['id' => 1, 'name' => 'Hasil Hutan Bukan Kayu', 'slug' => 'hhbk'],
             ]),
             'name' => 'produk admin 2 ke 2',
             'description' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ex, veniam!',
@@ -140,7 +140,7 @@ class DatabaseSeeder extends Seeder
         Product::create([
             'user_id' => 2,
             'category' => json_encode([
-                ['id' => 2, 'category_name' => 'Hasil Hutan Kayu', 'slug' => 'hhk'],
+                ['id' => 2, 'name' => 'Hasil Hutan Kayu', 'slug' => 'hhk'],
             ]),
             'name' => 'produk admin 2 ke 3',
             'description' => 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repudiandae, vel!',
@@ -152,7 +152,7 @@ class DatabaseSeeder extends Seeder
         Product::create([
             'user_id' => 2,
             'category' => json_encode([
-                ['id' => 1, 'category_name' => 'Hasil Hutan Bukan Kayu', 'slug' => 'hhbk'],
+                ['id' => 1, 'name' => 'Hasil Hutan Bukan Kayu', 'slug' => 'hhbk'],
             ]),
             'name' => 'produk admin 2 ke 4',
             'description' => 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, magnam.',
@@ -164,7 +164,7 @@ class DatabaseSeeder extends Seeder
         Product::create([
             'user_id' => 2,
             'category' => json_encode([
-                ['id' => 2, 'category_name' => 'Hasil Hutan Kayu', 'slug' => 'hhk'],
+                ['id' => 2, 'name' => 'Hasil Hutan Kayu', 'slug' => 'hhk'],
             ]),
             'name' => 'produk admin 2 ke 5',
             'description' => 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Incidunt, fugiat.',
