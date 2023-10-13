@@ -35,7 +35,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->group(['middleware' => 'auth'], function () use ($router) {
         // Auth
         $router->post('/logout', 'ApiAuthController@logout');
-        $router->post('/refresh', 'ApiAuthController@refresh'); //!! ADMIN
+        // $router->post('/refresh', 'ApiAuthController@refresh'); //!! DELETED
         $router->get('/user', 'ApiAuthController@user'); //!! ADMIN
 
         // Update Profile
