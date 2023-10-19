@@ -35,7 +35,6 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->group(['middleware' => 'auth'], function () use ($router) {
         // Auth
         $router->post('/logout', 'ApiAuthController@logout');
-        // $router->post('/refresh', 'ApiAuthController@refresh'); //!! DELETED
         $router->get('/user', 'ApiAuthController@user'); //!! ADMIN
 
         // Update Profile
@@ -44,7 +43,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 
         // Product
         $router->post('/product', 'ApiProductController@store'); //!! ADMIN
-        $router->post('/product/{id}', 'ApiProductController@update'); //!! ADMIN
+        $router->post('/product/{id}', 'ApiProductController@updateProduct'); //!! ADMIN
         $router->delete('/product/{id}', 'ApiProductController@destroy'); //!! ADMIN
 
         // Transaction

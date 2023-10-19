@@ -13,8 +13,8 @@ class ApiAuthController extends Controller
     public function register()
     {
         $validator = Validator::make(request()->all(), [
-            'username' => 'required|unique:users',
-            'email' => 'required|email',
+            'username' => 'required|unique:users,username',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required',
         ]);
 
@@ -69,39 +69,13 @@ class ApiAuthController extends Controller
 
         if ($request->hasFile('image')) {
             if ($user->image) {
-                $destination = public_path($user->image);
+                $destination = public_path('img/' . $user->image);
                 if (File::exists($destination)) {
                     File::delete($destination);
                 }
-
-                //!! Firebase
-                // $oldData = $user->image;
-                // $oldUri = explode('/', $oldData);
-                // $filename = explode('?', $oldUri[5])[0];
-                // $old_firebase_storage_path = $oldUri[4] . '/' . $filename;
-                // app('firebase.storage')->getBucket()->object($old_firebase_storage_path)->delete();
-                //!! Firebase
             }
-
-            $filename = $request->file('image')->store('UserImages', 'public');
-
-            //!! Firebase
-            // $imageData = $request->input('image');
-            // // $base64Image = substr($imageData, strpos($imageData, ',') + 1);
-            // $imageData = base64_decode($imageData);
-            // $fileName = date('Ymdhis') . $user->id . '.jpg';
-            // $firebaseStoragePath = "UserImages/{$fileName}";
-            // Storage::disk('local')->put("public/UserImages/{$fileName}", $imageData);
-            // $uploadedFile = fopen(storage_path("app/public/UserImages/{$fileName}"), 'r');
-            // app('firebase.storage')->getBucket()->upload($uploadedFile, ['name' => $firebaseStoragePath]);
-            // Storage::disk('local')->delete("public/UserImages/{$fileName}");
-            // $expiresAt = new DateTime('2030-01-01');
-            // $imageReference = app('firebase.storage')->getBucket()->object($firebaseStoragePath);
-            // $imageUrl = $imageReference->signedUrl($expiresAt);
-            // $user->image = $imageUrl;
-            //!! Firebase
-
-            $user->image = 'storage/' . $filename;
+            $filename = $request->file('image')->store('profile-images', 'public_uploads');
+            $user->image = $filename;
         }
 
         $user->name = $request->input('name');
@@ -158,16 +132,6 @@ class ApiAuthController extends Controller
 
         return response()->json(['message' => 'Successfully logged out']);
     }
-
-    // /**
-    //  * Refresh a token.
-    //  *
-    //  * @return \Illuminate\Http\JsonResponse
-    //  */
-    // public function refresh()
-    // {
-    //     return $this->respondWithToken(auth()->guard('api')->refresh());
-    // }
 
     /**
      * Get the token array structure.

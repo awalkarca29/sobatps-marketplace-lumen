@@ -25,19 +25,17 @@ class ApiTransactionController extends Controller
         return response()->json($transaction);
     }
 
-    public function indexCart(Request $request)
+    public function indexCart()
     {
         $user = auth()->guard('api')->user();
         $user = User::find($user->id);
 
-        $cart = Transaction::with('product.user')
-            ->where('user_id', $user->id)
+        $cart = Transaction::with('product', 'seller')
+            ->where('buyer_id', $user->id)
             ->where(function ($query) {
                 $query->where('status', "pending")
                     ->orWhere('status', "accepted");
             })
-        // ->where('status', "accepted")
-        // ->orWhere('status', "pending")
             ->latest()
             ->get();
 
@@ -49,7 +47,7 @@ class ApiTransactionController extends Controller
         $user = auth()->guard('api')->user();
         $user = User::find($user->id);
 
-        $cart = Transaction::with('product.user')->find($id);
+        $cart = Transaction::with('product', 'seller')->find($id);
 
         return response()->json(new CartShow($cart));
     }
@@ -59,8 +57,8 @@ class ApiTransactionController extends Controller
         $user = auth()->guard('api')->user();
         $user = User::find($user->id);
 
-        $history = Transaction::with('product.user')
-            ->where('user_id', $user->id)
+        $history = Transaction::with('product', 'seller')
+            ->where('buyer_id', $user->id)
             ->where('status', "done")
             ->latest()
             ->get();
@@ -73,14 +71,12 @@ class ApiTransactionController extends Controller
         $user = auth()->guard('api')->user();
         $user = User::find($user->id);
 
-        $notification = Transaction::with('product.user')
-            ->where('user_id', $user->id)
+        $notification = Transaction::with('product', 'seller')
+            ->where('buyer_id', $user->id)
             ->where(function ($query) {
                 $query->where('status', "rejected")
                     ->orWhere('status', "accepted");
             })
-        // ('status', "rejected")
-        // ->orWhere('status', "accepted")
             ->latest()
             ->get();
 
@@ -89,11 +85,10 @@ class ApiTransactionController extends Controller
 
     public function readNotification($id)
     {
-
         $user = auth()->guard('api')->user();
         $notification = Transaction::find($id);
 
-        if ($user->id != $notification->user_id) {
+        if ($user->id != $notification->buyer_id) {
             return response()->json([
                 "success" => false,
                 "message" => "You're not the owner of the notification!",
@@ -111,12 +106,12 @@ class ApiTransactionController extends Controller
         $user = auth()->guard('api')->user();
         $user = User::find($user->id);
 
-        $transaction = Transaction::with('product.user')->where('user_id', $user->id)->latest()->get();
+        $transaction = Transaction::with('product', 'seller')->where('buyer_id', $user->id)->latest()->get();
 
         if ($request['search_status']) {
             $searchStatus = $request['search_status'];
-            $transaction = Transaction::with('product.user')
-                ->where('user_id', $user->id)
+            $transaction = Transaction::with('product', 'seller')
+                ->where('buyer_id', $user->id)
                 ->where('status', 'like', '%' . $searchStatus . '%')
                 ->latest()
                 ->get();
@@ -125,10 +120,11 @@ class ApiTransactionController extends Controller
         return response()->json($transaction);
     }
 
-    public function store(Request $request)
+    public function store()
     {
         $validator = Validator::make(request()->all(), [
             'product_id' => 'required',
+            'seller_id' => 'required',
             'quantities' => 'required',
             'price' => 'required',
         ]);
@@ -140,8 +136,9 @@ class ApiTransactionController extends Controller
         $user = auth()->guard('api')->user();
 
         $transaction = Transaction::create([
-            'user_id' => $user->id,
+            'buyer_id' => $user->id,
             'product_id' => request('product_id'),
+            'seller_id' => request('seller_id'),
             'status' => "pending",
             'quantities' => request('quantities'),
             'price' => request('price'),
@@ -155,8 +152,9 @@ class ApiTransactionController extends Controller
     public function show($id)
     {
         $user = auth()->guard('api')->user();
+        $user = User::find($user->id);
 
-        $transactions = Transaction::with('product.user')->find($id);
+        $transactions = Transaction::with('product', 'seller')->where('buyer_id', $user->id)->find($id);
 
         return response()->json(new TransactionShow($transactions));
     }
@@ -175,7 +173,7 @@ class ApiTransactionController extends Controller
         $user = auth()->guard('api')->user();
         $transaction = Transaction::find($id);
 
-        if ($user->id != $transaction->user_id) {
+        if ($user->id != $transaction->buyer_id) {
             return response()->json([
                 "success" => false,
                 "message" => "You're not the owner of the transaction!",
@@ -211,7 +209,7 @@ class ApiTransactionController extends Controller
         $user = auth()->guard('api')->user();
         $transaction = Transaction::find($id);
 
-        if ($user->id != $transaction->user_id) {
+        if ($user->id != $transaction->buyer_id) {
             return response()->json([
                 "success" => false,
                 "message" => "You're not the owner of the transaction!",

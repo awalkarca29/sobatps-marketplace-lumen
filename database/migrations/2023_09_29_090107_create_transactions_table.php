@@ -15,12 +15,13 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('buyer_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreignId('seller_id')->constrained('users')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onUpdate('cascade')->onDelete('cascade');
             $table->string('status')->default('pending');
             $table->boolean('isRead')->default(false);
-            $table->integer('quantities');
             $table->integer('price');
+            $table->integer('quantities');
             $table->timestamps();
         });
     }
