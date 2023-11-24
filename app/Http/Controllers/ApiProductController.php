@@ -14,7 +14,7 @@ class ApiProductController extends Controller
     public function indexCategory()
     {
         $category = Category::all();
-        return response()->json($category);
+        return response()->json($category, 200);
     }
 
     /**
@@ -40,7 +40,7 @@ class ApiProductController extends Controller
             $products[$key]['category_id'] = json_decode($val['category_id']);
         }
 
-        return response()->json($products);
+        return response()->json($products, 200);
     }
 
     /**
@@ -86,7 +86,7 @@ class ApiProductController extends Controller
         $product->image = $filename;
         $product->save();
 
-        return response()->json($product);
+        return response()->json($product, 200);
     }
 
     /**
@@ -99,16 +99,16 @@ class ApiProductController extends Controller
     {
         $products = Product::find($id);
 
-        return response()->json(new ProductShow($products));
+        if ($products === null) {
+            return response()->json([
+                "success" => false,
+                "message" => "Product not found.",
+            ], 404);
+        }
+
+        return response()->json(new ProductShow($products), 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function updateProduct(Request $request, $id)
     {
         $validator = Validator::make(request()->all(), [
@@ -129,6 +129,13 @@ class ApiProductController extends Controller
         $user = auth()->guard('api')->user();
         $product = Product::find($id);
 
+        if ($product === null) {
+            return response()->json([
+                "success" => false,
+                "message" => "Product not found.",
+            ], 404);
+        }
+
         if ($user->id != $product->user_id) {
             return response()->json([
                 "success" => false,
@@ -143,7 +150,6 @@ class ApiProductController extends Controller
                     File::delete($destination);
                 }
             }
-
             $filename = $request->file('image')->store('product-images', 'public_uploads');
             $product->image = $filename;
         }
@@ -158,7 +164,7 @@ class ApiProductController extends Controller
         $product->isSold = $request->isSold;
         $product->save();
 
-        return response()->json($product);
+        return response()->json($product, 200);
     }
 
     /**
@@ -172,6 +178,13 @@ class ApiProductController extends Controller
         $user = auth()->guard('api')->user();
         $product = Product::find($id);
 
+        if ($product === null) {
+            return response()->json([
+                "success" => false,
+                "message" => "Product not found.",
+            ], 404);
+        }
+
         if ($user->id != $product->user_id) {
             return response()->json([
                 "success" => false,
@@ -184,10 +197,13 @@ class ApiProductController extends Controller
             if (File::exists($destination)) {
                 File::delete($destination);
             }
-
-            $product->delete();
-
-            return response()->json($product);
         }
+
+        $product->delete();
+
+        return response()->json([
+            "success" => true,
+            "message" => "Successfully deleted",
+        ], 200);
     }
 }

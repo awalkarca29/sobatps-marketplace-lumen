@@ -29,9 +29,9 @@ class ApiAuthController extends Controller
         ]);
 
         if ($user) {
-            return response()->json($user);
+            return response()->json($user, 200);
         } else {
-            return response()->json(['message' => 'Registration Failed']);
+            return response()->json(['message' => 'Registration Failed'], 400);
         }
     }
 
@@ -84,7 +84,7 @@ class ApiAuthController extends Controller
         $user->phone = $request->input('phone');
         $user->save();
 
-        return response()->json($user);
+        return response()->json($user, 200);
     }
 
     public function changePassword(Request $request)
@@ -105,7 +105,7 @@ class ApiAuthController extends Controller
             $user->update([
                 'password' => Hash::make($request->password),
             ]);
-            return response()->json(['message' => 'Password successfully updated']);
+            return response()->json(['message' => 'Password successfully updated'], 200);
         } else {
             return response()->json(['message' => 'Old password does not matched'], 400);
         }
@@ -118,7 +118,7 @@ class ApiAuthController extends Controller
      */
     public function user()
     {
-        return response()->json(auth()->guard('api')->user());
+        return response()->json(auth()->guard('api')->user(), 200);
     }
 
     /**
@@ -130,7 +130,7 @@ class ApiAuthController extends Controller
     {
         auth()->guard('api')->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Successfully logged out'], 200);
     }
 
     /**
@@ -146,6 +146,6 @@ class ApiAuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->guard('api')->factory()->getTTL() * 60,
-        ]);
+        ], 200);
     }
 }
